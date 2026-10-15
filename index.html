@@ -4,157 +4,346 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Mahallos Fest · Lista de la compra</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Caveat:wght@500;700&family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#f7f3ec; --panel:#fffdf9; --ink:#2b2622; --muted:#8a7e71;
-    --line:#e8e0d3; --accent:#b8512f; --accent-soft:#fbeee7; --green:#6b7f4a;
+    --paper:#f7f2e7;
+    --paper-2:#fffdf8;
+    --ink:#131313;
+    --muted:#7a6e60;
+    --line:#d9cfbb;
+    --red:#e63946;
+    --blue:#1d7fbf;
+    --yellow:#f4b400;
+    --orange:#e87b2c;
+    --green:#3a8c4f;
+    --accent:var(--red);
   }
   *{box-sizing:border-box}
   html,body{margin:0;padding:0}
   body{
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,Roboto,sans-serif;
-    background:var(--bg); color:var(--ink); font-size:15px; line-height:1.5;
+    font-family:"Rubik",-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    font-size:15px; line-height:1.5;
+    background-image:
+      radial-gradient(rgba(0,0,0,.035) 1px, transparent 1px),
+      radial-gradient(rgba(0,0,0,.025) 1px, transparent 1px);
+    background-size: 24px 24px, 40px 40px;
+    background-position: 0 0, 12px 12px;
   }
-  header{
-    padding:22px 32px 18px; background:var(--panel);
-    border-bottom:1px solid var(--line);
-    position:sticky; top:0; z-index:20;
-    display:flex; align-items:baseline; gap:16px; flex-wrap:wrap;
-  }
-  header h1{margin:0; font-size:22px; letter-spacing:.3px}
-  header h1 span{color:var(--accent)}
-  header p{margin:0; color:var(--muted); font-size:13px}
-  header .reset{
-    margin-left:auto; background:transparent; border:1px solid var(--line);
-    color:var(--muted); padding:6px 12px; border-radius:8px; cursor:pointer; font-size:13px;
-  }
-  header .reset:hover{border-color:var(--accent); color:var(--accent)}
 
+  /* =============== HEADER CARTEL =============== */
+  header{
+    position:relative;
+    padding:34px 32px 26px;
+    background:var(--paper-2);
+    border-bottom:3px solid var(--ink);
+    overflow:hidden;
+  }
+  .header-inner{
+    max-width:1500px; margin:0 auto; position:relative; z-index:2;
+    display:flex; align-items:flex-end; gap:24px; flex-wrap:wrap;
+  }
+  .masthead{flex:1 1 auto; min-width:280px}
+  .masthead h1{
+    font-family:"Bungee",sans-serif;
+    font-size: clamp(38px, 8vw, 92px);
+    line-height:.9; letter-spacing:-1px;
+    margin:0; color:var(--ink);
+    text-transform:uppercase;
+    position:relative;
+  }
+  .masthead h1 .o{
+    display:inline-block; position:relative; color:var(--ink);
+  }
+  .masthead h1 .o::after{
+    content:"♥";
+    position:absolute; left:50%; top:52%;
+    transform:translate(-50%,-50%);
+    font-size:.32em; color:var(--paper-2);
+    font-family:"Rubik",sans-serif;
+  }
+  .masthead .fest-tag{
+    font-family:"Caveat",cursive;
+    font-size: clamp(22px, 3.2vw, 34px);
+    font-weight:700;
+    color:var(--ink);
+    margin-top:-4px;
+    display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+  }
+  .masthead .fest-tag .dates{
+    background:var(--ink); color:var(--paper-2);
+    padding:2px 12px; border-radius:2px;
+    transform: rotate(-2deg);
+    font-size:.8em;
+  }
+  .masthead .fest-tag .place{
+    color:var(--red); font-weight:700;
+    transform:rotate(1.5deg);
+  }
+
+  .header-side{
+    display:flex; flex-direction:column; align-items:flex-end; gap:10px;
+  }
+  .reset{
+    background:var(--paper-2);
+    border:2px solid var(--ink);
+    color:var(--ink);
+    padding:8px 14px; border-radius:10px;
+    cursor:pointer; font-size:13px; font-weight:600;
+    font-family:inherit;
+    box-shadow:3px 3px 0 var(--ink);
+    transition: transform .12s, box-shadow .12s;
+  }
+  .reset:hover{transform:translate(-1px,-1px); box-shadow:4px 4px 0 var(--ink)}
+  .reset:active{transform:translate(2px,2px); box-shadow:1px 1px 0 var(--ink)}
+
+  .doodle{
+    position:absolute; z-index:1; pointer-events:none;
+    opacity:.9;
+  }
+  .doodle.top-left{top:-10px; left:-20px; width:200px; height:200px}
+  .doodle.top-right{top:10px; right:-30px; width:180px; height:180px}
+  .doodle.bottom{ bottom:-30px; left:40%; width:260px; height:120px; opacity:.7}
+
+  /* =============== MAIN =============== */
   main{
-    display:grid; grid-template-columns: minmax(0,1fr) 400px;
-    gap:24px; padding:24px 32px 60px; max-width:1500px; margin:0 auto;
+    display:grid; grid-template-columns: minmax(0,1fr) 420px;
+    gap:26px; padding:28px 32px 80px;
+    max-width:1500px; margin:0 auto;
     align-items:start;
+    position:relative; z-index:2;
   }
   @media (max-width:1000px){
-    main{grid-template-columns:1fr; padding:16px}
+    main{grid-template-columns:1fr; padding:18px}
+    header{padding:22px 18px 18px}
   }
 
   .panel{
-    background:var(--panel); border:1px solid var(--line);
-    border-radius:14px; padding:18px 20px; margin-bottom:18px;
+    background:var(--paper-2);
+    border:2.5px solid var(--ink);
+    border-radius:14px;
+    padding:18px 20px; margin-bottom:20px;
+    box-shadow:5px 5px 0 var(--ink);
+    position:relative;
   }
   .panel h2{
-    margin:0 0 14px; font-size:13px; text-transform:uppercase;
-    letter-spacing:1px; color:var(--muted); font-weight:600;
+    margin:0 0 16px; font-size:13px; text-transform:uppercase;
+    letter-spacing:1.5px; color:var(--ink); font-weight:700;
+    display:flex; align-items:center; gap:10px;
+  }
+  .panel h2::before{
+    content:"✦"; color:var(--red); font-size:16px;
   }
 
-  /* ---- Inputs personas ---- */
+  /* =============== INPUTS PERSONAS =============== */
   .people-grid{
-    display:grid; grid-template-columns:repeat(auto-fill,minmax(190px,1fr));
+    display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
     gap:10px;
   }
   .person-field{
     display:flex; align-items:center; justify-content:space-between;
-    gap:10px; padding:8px 12px; border:1px solid var(--line);
+    gap:10px; padding:8px 12px;
+    border:2px solid var(--ink);
     border-radius:10px; background:#fff; font-size:14px;
+    box-shadow:2px 2px 0 var(--ink);
+    transition:transform .12s, box-shadow .12s;
   }
-  .person-field label{color:var(--ink); font-weight:500}
+  .person-field:focus-within{
+    transform:translate(-1px,-1px);
+    box-shadow:3px 3px 0 var(--ink);
+  }
+  .person-field label{color:var(--ink); font-weight:600; font-size:13px}
   .person-field input{
-    width:64px; text-align:center; font-size:15px; font-weight:600;
-    border:1px solid var(--line); border-radius:8px; padding:5px 6px;
-    background:var(--accent-soft); color:var(--accent); font-family:inherit;
+    width:64px; text-align:center; font-size:15px; font-weight:700;
+    border:2px solid var(--ink); border-radius:8px; padding:4px 6px;
+    background:var(--yellow); color:var(--ink); font-family:inherit;
   }
-  .person-field input:focus{outline:2px solid var(--accent); outline-offset:1px}
+  .person-field input:focus{
+    outline:none;
+    background:#fff;
+  }
+  .person-field:nth-child(1) input{background:#ffe27a}
+  .person-field:nth-child(2) input{background:#ffd0d3}
+  .person-field:nth-child(3) input{background:#c6e6ff}
+  .person-field:nth-child(4) input{background:#ffd9b3}
+  .person-field:nth-child(5) input{background:#cdeccd}
+  .person-field:nth-child(6) input{background:#e5d4ff}
 
-  /* ---- Secciones recetas ---- */
-  .section{margin-bottom:18px; background:var(--panel); border:1px solid var(--line); border-radius:14px; overflow:hidden}
+  /* =============== SECCIONES RECETAS =============== */
+  .section{
+    margin-bottom:20px;
+    background:var(--paper-2);
+    border:2.5px solid var(--ink);
+    border-radius:14px; overflow:hidden;
+    box-shadow:5px 5px 0 var(--ink);
+  }
   .section-header{
     display:flex; align-items:center; gap:12px;
-    padding:14px 18px; background:linear-gradient(180deg,#fffdf9,#faf5ec);
-    border-bottom:1px solid var(--line);
+    padding:12px 18px;
+    background:var(--ink);
+    color:var(--paper-2);
   }
   .section-header h3{
-    margin:0; font-size:15px; font-weight:600; letter-spacing:.2px;
+    margin:0; font-size:15px; font-weight:700;
+    font-family:"Bungee",sans-serif; letter-spacing:1px;
+    text-transform:uppercase;
   }
   .section-header .pers{
-    font-size:12px; color:var(--muted);
-    background:#fff; border:1px solid var(--line); border-radius:20px; padding:3px 10px;
+    font-size:12px; font-weight:600;
+    background:var(--paper-2); color:var(--ink);
+    border-radius:20px; padding:3px 12px;
+    border:1.5px solid var(--paper-2);
   }
   .section-header .bulk{
     margin-left:auto; display:flex; gap:6px;
   }
   .section-header .bulk button{
-    font-size:11px; background:transparent; border:1px solid var(--line);
-    border-radius:6px; padding:3px 8px; cursor:pointer; color:var(--muted);
+    font-size:11px; background:transparent;
+    border:1.5px solid var(--paper-2);
+    border-radius:20px; padding:3px 10px; cursor:pointer;
+    color:var(--paper-2); font-family:inherit; font-weight:600;
+    transition: background .12s, color .12s;
   }
-  .section-header .bulk button:hover{border-color:var(--accent); color:var(--accent)}
+  .section-header .bulk button:hover{
+    background:var(--paper-2); color:var(--ink);
+  }
 
-  .recipe{border-top:1px solid var(--line); padding:12px 18px}
+  .recipe{
+    border-top:1.5px dashed var(--line);
+    padding:12px 18px;
+    transition: background .2s, box-shadow .2s;
+  }
   .recipe:first-of-type{border-top:none}
+
+  /* Resalta la receta cuando su checkbox está marcado */
+  .recipe:has(input[type=checkbox]:checked){
+    background: linear-gradient(90deg, #fff3c4 0%, #fffdf8 70%);
+    box-shadow: inset 4px 0 0 var(--red);
+  }
+
   .recipe-head{display:flex; align-items:center; gap:12px; cursor:pointer; user-select:none}
   .recipe-head input[type=checkbox]{
     appearance:none; -webkit-appearance:none;
-    width:20px; height:20px; border:2px solid var(--line); border-radius:6px;
+    width:22px; height:22px; border:2.5px solid var(--ink); border-radius:7px;
     background:#fff; cursor:pointer; position:relative; flex-shrink:0;
     transition:all .15s;
   }
   .recipe-head input[type=checkbox]:checked{
-    background:var(--accent); border-color:var(--accent);
+    background:var(--red); border-color:var(--ink);
   }
   .recipe-head input[type=checkbox]:checked::after{
     content:""; position:absolute; left:5px; top:1px;
-    width:5px; height:10px; border:solid #fff; border-width:0 2px 2px 0;
+    width:6px; height:11px; border:solid #fff; border-width:0 2.5px 2.5px 0;
     transform:rotate(45deg);
   }
-  .recipe-name{font-weight:500; flex:1}
-  .recipe-head input:checked ~ .recipe-name{color:var(--accent)}
-  .recipe-pers{font-size:12px; color:var(--muted)}
+  .recipe-name{
+    font-weight:600; flex:1; font-size:15px;
+    transition: color .15s;
+  }
+  .recipe-head input:checked ~ .recipe-name{
+    color:var(--red);
+    font-weight:700;
+  }
+  .recipe-pers{
+    font-size:12px; color:var(--muted);
+    font-family:"Caveat",cursive; font-size:16px; font-weight:500;
+  }
 
   .ingredients{
-    list-style:none; margin:10px 0 0 32px; padding:0;
+    list-style:none; margin:10px 0 0 34px; padding:0;
     display:none; font-size:13px; color:var(--muted);
-    border-left:2px solid var(--line); padding-left:14px;
+    border-left:3px solid var(--line); padding-left:14px;
   }
   .recipe.open .ingredients{display:block}
   .ingredients li{display:flex; justify-content:space-between; padding:2px 0; gap:12px}
-  .ingredients li span:last-child{color:var(--ink); font-weight:500; white-space:nowrap}
+  .ingredients li span:last-child{color:var(--ink); font-weight:600; white-space:nowrap}
 
-  /* ---- Lista compra ---- */
-  .list-panel{position:sticky; top:100px}
+  /* =============== LISTA COMPRA =============== */
+  .list-panel{position:sticky; top:24px}
   @media (max-width:1000px){.list-panel{position:static}}
   .list-panel .panel{padding:0; overflow:hidden}
   .list-head{
-    padding:16px 20px; border-bottom:1px solid var(--line);
+    padding:16px 20px;
+    border-bottom:2.5px solid var(--ink);
     display:flex; align-items:baseline; gap:10px;
-    background:linear-gradient(180deg,#fffdf9,#faf5ec);
+    background:var(--yellow);
+    color:var(--ink);
   }
-  .list-head h2{margin:0; font-size:15px; letter-spacing:.2px}
-  .list-head .count{font-size:12px; color:var(--muted); margin-left:auto}
+  .list-head h2{
+    margin:0; font-size:15px; letter-spacing:1px;
+    font-family:"Bungee",sans-serif; text-transform:uppercase;
+    color:var(--ink);
+  }
+  .list-head h2::before{content:""; display:none}
+  .list-head .count{
+    font-size:12px; font-weight:600; margin-left:auto;
+    background:var(--ink); color:var(--paper-2);
+    padding:3px 10px; border-radius:20px;
+  }
   #shoppingList{
-    list-style:none; margin:0; padding:6px 0; max-height:70vh; overflow-y:auto;
+    list-style:none; margin:0; padding:8px 0;
+    max-height:70vh; overflow-y:auto;
   }
   #shoppingList li{
     display:flex; align-items:baseline; gap:12px;
-    padding:8px 20px; border-bottom:1px dashed var(--line);
+    padding:9px 20px; border-bottom:1.5px dashed var(--line);
     font-size:14px;
   }
   #shoppingList li:last-child{border-bottom:none}
-  .item-name{flex:1; min-width:0; word-break:break-word}
-  .item-qty{font-variant-numeric:tabular-nums; text-align:right; white-space:nowrap}
-  .item-qty b{color:var(--accent); font-weight:600}
+  .item-name{flex:1; min-width:0; word-break:break-word; font-weight:500}
+  .item-qty{
+    font-variant-numeric:tabular-nums; text-align:right; white-space:nowrap;
+  }
+  .item-qty b{color:var(--red); font-weight:700; font-size:16px}
   .item-qty .unit{color:var(--muted); font-size:12px; margin-left:3px}
   .item-note{
-    display:block; font-size:11px; color:var(--muted); text-align:right; margin-top:1px;
+    display:block; font-size:11px; color:var(--blue);
+    text-align:right; margin-top:2px;
+    font-family:"Caveat",cursive; font-size:14px; font-weight:600;
   }
-  .empty{padding:24px 20px; color:var(--muted); font-size:13px; text-align:center}
+  .empty{
+    padding:30px 20px; color:var(--muted);
+    text-align:center; font-family:"Caveat",cursive; font-size:20px;
+  }
+
+  #shoppingList::-webkit-scrollbar{width:8px}
+  #shoppingList::-webkit-scrollbar-track{background:transparent}
+  #shoppingList::-webkit-scrollbar-thumb{
+    background:var(--ink); border-radius:4px;
+  }
 </style>
 </head>
 <body>
 
 <header>
-  <h1>Mahallos <span>Fest</span></h1>
-  <p>Ajusta personas y recetas → la lista se recalcula sola</p>
-  <button class="reset" id="resetBtn">↺ Reset</button>
+  <svg class="doodle top-left" viewBox="0 0 200 200" fill="none">
+    <path d="M10,80 Q40,40 60,80 T110,80 T160,80" stroke="#e63946" stroke-width="5" stroke-linecap="round" fill="none"/>
+    <path d="M10,100 Q40,60 60,100 T110,100 T160,100" stroke="#1d7fbf" stroke-width="5" stroke-linecap="round" fill="none"/>
+    <path d="M10,120 Q40,80 60,120 T110,120 T160,120" stroke="#f4b400" stroke-width="5" stroke-linecap="round" fill="none"/>
+  </svg>
+  <svg class="doodle top-right" viewBox="0 0 200 200" fill="none">
+    <path d="M100,40 C90,15 60,20 60,45 C60,70 100,90 100,110 C100,90 140,70 140,45 C140,20 110,15 100,40 Z"
+          stroke="#131313" stroke-width="4" fill="none" stroke-linejoin="round"/>
+    <circle cx="160" cy="140" r="6" fill="#e63946"/>
+    <circle cx="40" cy="150" r="4" fill="#1d7fbf"/>
+  </svg>
+
+  <div class="header-inner">
+    <div class="masthead">
+      <h1>MAH<span class="o">A</span>LL<span class="o">O</span>S</h1>
+      <div class="fest-tag">
+        <span class="dates">26 · 27 · 28 MAYO</span>
+        <span class="place">BURGO ★ 2026</span>
+      </div>
+    </div>
+    <div class="header-side">
+      <button class="reset" id="resetBtn">↺ Reset</button>
+    </div>
+  </div>
 </header>
 
 <main>
@@ -170,7 +359,7 @@
     <div class="panel">
       <div class="list-head">
         <h2>Lista de la compra</h2>
-        <span class="count"><span id="itemCount">0</span> productos</span>
+        <span class="count"><span id="itemCount">0</span> prod.</span>
       </div>
       <ul id="shoppingList"></ul>
     </div>
@@ -379,7 +568,7 @@ const RECIPES = [
 /* =========================================================
    ESTADO + PERSISTENCIA
    ========================================================= */
-const STORAGE_KEY = 'mahallos-fest-v1';
+const STORAGE_KEY = 'mahallos-fest-v2';
 
 const state = {
   people: { ...DEFAULT_PEOPLE },
@@ -406,15 +595,12 @@ function loadState(){
 /* =========================================================
    CÁLCULO
    ========================================================= */
-
-/** Devuelve la cantidad total de esa receta para N personas. */
 function scaleIngredient(ing, people){
   return (ing.qty / ing.base) * people;
 }
 
-/** Agrupa todos los ingredientes de las recetas seleccionadas. */
 function buildShoppingList(){
-  const totals = {}; // nombre -> { qty, unit }
+  const totals = {};
   for (const recipe of RECIPES){
     if (!state.selected[recipe.id]) continue;
     const section = SECTIONS.find(s => s.id === recipe.section);
@@ -427,22 +613,26 @@ function buildShoppingList(){
       totals[ing.name].qty += add;
     }
   }
-  // Ordenar alfabéticamente
   return Object.entries(totals)
     .sort(([a],[b]) => a.localeCompare(b, 'es', { sensitivity:'base' }))
     .map(([name, v]) => ({ name, qty: v.qty, unit: v.unit }));
 }
 
-/** Notas especiales (packs, cabezas de ajo) */
 function extraNote(name, total){
   const n = name.toLowerCase();
-  if (n.includes('cerveza') && n.includes('lata')){
+
+  if (n.includes('cerveza') && (n.includes('lata') || n.includes('latas'))){
     const packs = Math.ceil(total / 24);
-    return packs > 0 ? `≈ ${packs} pack${packs>1?'s':''} de 24` : null;
+    const liters = total * 0.33;
+    const parts = [];
+    if (packs > 0) parts.push(`${packs} pack${packs>1?'s':''} de 24`);
+    if (liters > 0) parts.push(`${fmtNum(liters)} L`);
+    return parts.join(' · ');
   }
+
   if (n === 'ajo (diente)' || n === 'dientes de ajo'){
     const heads = Math.ceil(total / 12);
-    return heads > 0 ? `≈ ${heads} cabeza${heads>1?'s':''} (12 dientes)` : null;
+    return heads > 0 ? `${heads} cabeza${heads>1?'s':''} (12 dientes)` : null;
   }
   return null;
 }
@@ -450,7 +640,6 @@ function extraNote(name, total){
 /* =========================================================
    RENDER
    ========================================================= */
-
 function fmtNum(n){
   if (!isFinite(n)) return '0';
   if (Math.abs(n - Math.round(n)) < 1e-9) return String(Math.round(n));
@@ -470,7 +659,7 @@ function renderPeopleInputs(){
       const v = Math.max(0, parseInt(e.target.value || '0', 10));
       state.people[e.target.dataset.key] = v;
       saveState();
-      renderRecipes();   // actualizar textos "N pers"
+      renderRecipes();
       renderList();
     });
   });
@@ -497,20 +686,15 @@ function renderRecipes(){
     `;
   }).join('');
 
-  // Listeners
   container.querySelectorAll('.recipe-head input[type=checkbox]').forEach(cb => {
     cb.addEventListener('change', e => {
       const id = e.target.dataset.id;
       state.selected[id] = e.target.checked;
       saveState();
       renderList();
-      // Refrescar el estilo del nombre
-      const head = e.target.closest('.recipe-head');
-      head.querySelector('.recipe-name').style.color = e.target.checked ? 'var(--accent)' : '';
     });
   });
 
-  // Toggle "ver ingredientes" al pulsar la cabecera (excepto el checkbox)
   container.querySelectorAll('.recipe-head').forEach(head => {
     head.addEventListener('click', e => {
       if (e.target.matches('input[type=checkbox]')) return;
@@ -518,7 +702,6 @@ function renderRecipes(){
     });
   });
 
-  // Botones "todo/nada"
   container.querySelectorAll('[data-bulk]').forEach(btn => {
     btn.addEventListener('click', e => {
       const section = e.target.closest('.section');
@@ -558,7 +741,7 @@ function renderList(){
   document.getElementById('itemCount').textContent = items.length;
 
   if (!items.length){
-    list.innerHTML = `<li class="empty">Marca alguna receta para ver la lista</li>`;
+    list.innerHTML = `<li class="empty">~ marca alguna receta para ver la lista ~</li>`;
     return;
   }
   list.innerHTML = items.map(it => {

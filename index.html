@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mahallos Fest · Lista de la compra</title>
+<style>
+  :root{
+    --bg:#f7f3ec; --panel:#fffdf9; --ink:#2b2622; --muted:#8a7e71;
+    --line:#e8e0d3; --accent:#b8512f; --accent-soft:#fbeee7; --green:#6b7f4a;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,Roboto,sans-serif;
+    background:var(--bg); color:var(--ink); font-size:15px; line-height:1.5;
+  }
+  header{
+    padding:22px 32px 18px; background:var(--panel);
+    border-bottom:1px solid var(--line);
+    position:sticky; top:0; z-index:20;
+    display:flex; align-items:baseline; gap:16px; flex-wrap:wrap;
+  }
+  header h1{margin:0; font-size:22px; letter-spacing:.3px}
+  header h1 span{color:var(--accent)}
+  header p{margin:0; color:var(--muted); font-size:13px}
+  header .reset{
+    margin-left:auto; background:transparent; border:1px solid var(--line);
+    color:var(--muted); padding:6px 12px; border-radius:8px; cursor:pointer; font-size:13px;
+  }
+  header .reset:hover{border-color:var(--accent); color:var(--accent)}
+
+  main{
+    display:grid; grid-template-columns: minmax(0,1fr) 400px;
+    gap:24px; padding:24px 32px 60px; max-width:1500px; margin:0 auto;
+    align-items:start;
+  }
+  @media (max-width:1000px){
+    main{grid-template-columns:1fr; padding:16px}
+  }
+
+  .panel{
+    background:var(--panel); border:1px solid var(--line);
+    border-radius:14px; padding:18px 20px; margin-bottom:18px;
+  }
+  .panel h2{
+    margin:0 0 14px; font-size:13px; text-transform:uppercase;
+    letter-spacing:1px; color:var(--muted); font-weight:600;
+  }
+
+  /* ---- Inputs personas ---- */
+  .people-grid{
+    display:grid; grid-template-columns:repeat(auto-fill,minmax(190px,1fr));
+    gap:10px;
+  }
+  .person-field{
+    display:flex; align-items:center; justify-content:space-between;
+    gap:10px; padding:8px 12px; border:1px solid var(--line);
+    border-radius:10px; background:#fff; font-size:14px;
+  }
+  .person-field label{color:var(--ink); font-weight:500}
+  .person-field input{
+    width:64px; text-align:center; font-size:15px; font-weight:600;
+    border:1px solid var(--line); border-radius:8px; padding:5px 6px;
+    background:var(--accent-soft); color:var(--accent); font-family:inherit;
+  }
+  .person-field input:focus{outline:2px solid var(--accent); outline-offset:1px}
+
+  /* ---- Secciones recetas ---- */
+  .section{margin-bottom:18px; background:var(--panel); border:1px solid var(--line); border-radius:14px; overflow:hidden}
+  .section-header{
+    display:flex; align-items:center; gap:12px;
+    padding:14px 18px; background:linear-gradient(180deg,#fffdf9,#faf5ec);
+    border-bottom:1px solid var(--line);
+  }
+  .section-header h3{
+    margin:0; font-size:15px; font-weight:600; letter-spacing:.2px;
+  }
+  .section-header .pers{
+    font-size:12px; color:var(--muted);
+    background:#fff; border:1px solid var(--line); border-radius:20px; padding:3px 10px;
+  }
+  .section-header .bulk{
+    margin-left:auto; display:flex; gap:6px;
+  }
+  .section-header .bulk button{
+    font-size:11px; background:transparent; border:1px solid var(--line);
+    border-radius:6px; padding:3px 8px; cursor:pointer; color:var(--muted);
+  }
+  .section-header .bulk button:hover{border-color:var(--accent); color:var(--accent)}
+
+  .recipe{border-top:1px solid var(--line); padding:12px 18px}
+  .recipe:first-of-type{border-top:none}
+  .recipe-head{display:flex; align-items:center; gap:12px; cursor:pointer; user-select:none}
+  .recipe-head input[type=checkbox]{
+    appearance:none; -webkit-appearance:none;
+    width:20px; height:20px; border:2px solid var(--line); border-radius:6px;
+    background:#fff; cursor:pointer; position:relative; flex-shrink:0;
+    transition:all .15s;
+  }
+  .recipe-head input[type=checkbox]:checked{
+    background:var(--accent); border-color:var(--accent);
+  }
+  .recipe-head input[type=checkbox]:checked::after{
+    content:""; position:absolute; left:5px; top:1px;
+    width:5px; height:10px; border:solid #fff; border-width:0 2px 2px 0;
+    transform:rotate(45deg);
+  }
+  .recipe-name{font-weight:500; flex:1}
+  .recipe-head input:checked ~ .recipe-name{color:var(--accent)}
+  .recipe-pers{font-size:12px; color:var(--muted)}
+
+  .ingredients{
+    list-style:none; margin:10px 0 0 32px; padding:0;
+    display:none; font-size:13px; color:var(--muted);
+    border-left:2px solid var(--line); padding-left:14px;
+  }
+  .recipe.open .ingredients{display:block}
+  .ingredients li{display:flex; justify-content:space-between; padding:2px 0; gap:12px}
+  .ingredients li span:last-child{color:var(--ink); font-weight:500; white-space:nowrap}
+
+  /* ---- Lista compra ---- */
+  .list-panel{position:sticky; top:100px}
+  @media (max-width:1000px){.list-panel{position:static}}
+  .list-panel .panel{padding:0; overflow:hidden}
+  .list-head{
+    padding:16px 20px; border-bottom:1px solid var(--line);
+    display:flex; align-items:baseline; gap:10px;
+    background:linear-gradient(180deg,#fffdf9,#faf5ec);
+  }
+  .list-head h2{margin:0; font-size:15px; letter-spacing:.2px}
+  .list-head .count{font-size:12px; color:var(--muted); margin-left:auto}
+  #shoppingList{
+    list-style:none; margin:0; padding:6px 0; max-height:70vh; overflow-y:auto;
+  }
+  #shoppingList li{
+    display:flex; align-items:baseline; gap:12px;
+    padding:8px 20px; border-bottom:1px dashed var(--line);
+    font-size:14px;
+  }
+  #shoppingList li:last-child{border-bottom:none}
+  .item-name{flex:1; min-width:0; word-break:break-word}
+  .item-qty{font-variant-numeric:tabular-nums; text-align:right; white-space:nowrap}
+  .item-qty b{color:var(--accent); font-weight:600}
+  .item-qty .unit{color:var(--muted); font-size:12px; margin-left:3px}
+  .item-note{
+    display:block; font-size:11px; color:var(--muted); text-align:right; margin-top:1px;
+  }
+  .empty{padding:24px 20px; color:var(--muted); font-size:13px; text-align:center}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Mahallos <span>Fest</span></h1>
+  <p>Ajusta personas y recetas → la lista se recalcula sola</p>
+  <button class="reset" id="resetBtn">↺ Reset</button>
+</header>
+
+<main>
+  <section>
+    <div class="panel">
+      <h2>Personas por evento</h2>
+      <div class="people-grid" id="peopleInputs"></div>
+    </div>
+    <div id="recipeGroups"></div>
+  </section>
+
+  <aside class="list-panel">
+    <div class="panel">
+      <div class="list-head">
+        <h2>Lista de la compra</h2>
+        <span class="count"><span id="itemCount">0</span> productos</span>
+      </div>
+      <ul id="shoppingList"></ul>
+    </div>
+  </aside>
+</main>
+
+<script>
+/* =========================================================
+   DATOS
+   ========================================================= */
+
+const DEFAULT_PEOPLE = {
+  'Cena Viernes': 14,
+  'Comida Sábado': 14,
+  'Cena Sábado': 14,
+  'Comida Domingo': 14,
+  'Resto': 14,
+  'Celiacos': 0,
+};
+
+const EVENT_LABELS = {
+  'Cena Viernes': 'Cena Viernes',
+  'Comida Sábado': 'Comida Sábado',
+  'Cena Sábado': 'Cena Sábado',
+  'Comida Domingo': 'Comida Domingo',
+  'Resto': 'Desayunos · Bebida · Picoteo · Varios',
+  'Celiacos': 'Menú celiaco',
+};
+
+const SECTIONS = [
+  { id:'cena-viernes',   label:'Cena Viernes',           eventKey:'Cena Viernes' },
+  { id:'comida-sabado',  label:'Comida Sábado',          eventKey:'Comida Sábado' },
+  { id:'cena-sabado',    label:'Cena Sábado',            eventKey:'Cena Sábado' },
+  { id:'comida-domingo', label:'Comida Domingo',         eventKey:'Comida Domingo' },
+  { id:'desayunos',      label:'Desayunos (x2)',         eventKey:'Resto' },
+  { id:'bebida',         label:'Bebida (x2)',            eventKey:'Resto' },
+  { id:'picoteo',        label:'Picoteo (2 noches)',     eventKey:'Resto' },
+  { id:'varios',         label:'Varios',                 eventKey:'Resto' },
+  { id:'celiacos',       label:'Menú especial (celiacos)', eventKey:'Celiacos' },
+];
+
+const RECIPES = [
+  /* ------- CENA VIERNES ------- */
+  { id:'tortilla', section:'cena-viernes', name:'Tortilla de Patata', serves:5, def:false, ingredients:[
+    { name:'Patatas',        qty:1.0,  base:5, unit:'kg' },
+    { name:'Huevos',         qty:6.0,  base:5, unit:'uni' },
+    { name:'Cebolla dulce',  qty:1.2,  base:5, unit:'uni' },
+    { name:'Pan',            qty:1.2,  base:5, unit:'barras' },
+    { name:'Aceite',         qty:0.5,  base:5, unit:'L' },
+  ]},
+  { id:'sopa-ajo', section:'cena-viernes', name:'Sopa de Ajo', serves:5, def:false, ingredients:[
+    { name:'Ajo (cabeza)',    qty:0.5,  base:5, unit:'Unid' },
+    { name:'Aceite oliva',    qty:0.06, base:5, unit:'L' },
+    { name:'pan duro',        qty:100,  base:5, unit:'g' },
+    { name:'Agua',            qty:1.0,  base:5, unit:'L' },
+    { name:'Huevos',          qty:2.0,  base:5, unit:'uni' },
+  ]},
+  { id:'sandwich', section:'cena-viernes', name:'Sándwich de Lolo', serves:4, def:false, ingredients:[
+    { name:'Lata de bonito en aceite de oliva', qty:100,  base:4, unit:'g' },
+    { name:'Pan de molde',                      qty:6,    base:4, unit:'uni' },
+    { name:'cebolleta',                         qty:1,    base:4, unit:'uni' },
+    { name:'Aceite oliva',                      qty:0.015,base:4, unit:'L' },
+    { name:'Huevos',                            qty:3,    base:4, unit:'uni' },
+    { name:'Mayonesa',                          qty:80,   base:4, unit:'g' },
+    { name:'Mostaza de dijon',                  qty:20,   base:4, unit:'g' },
+    { name:'Salsa soja',                        qty:10,   base:4, unit:'g' },
+    { name:'Bote de pepinillos agridulces',     qty:80,   base:4, unit:'g (escurrido)' },
+  ]},
+  { id:'empanada', section:'cena-viernes', name:'Empanada', serves:5, def:true, ingredients:[
+    { name:'Empanada', qty:1, base:5, unit:'uni' },
+  ]},
+
+  /* ------- COMIDA SÁBADO ------- */
+  { id:'lentejas', section:'comida-sabado', name:'Lentejas', serves:5, def:false, ingredients:[
+    { name:'Lentejas (Pardina)', qty:0.4,  base:5, unit:'kg' },
+    { name:'Cebolla',            qty:1.0,  base:5, unit:'uni' },
+    { name:'Patatas',            qty:0.25, base:5, unit:'kg' },
+    { name:'Pimiento rojo',      qty:1.0,  base:5, unit:'uni' },
+    { name:'Ajo (cabeza)',       qty:0.25, base:5, unit:'uni' },
+    { name:'Tomates (rama)',     qty:1.0,  base:5, unit:'uni' },
+    { name:'Laurel',             qty:1.0,  base:5, unit:'hojas' },
+    { name:'Aceite oliva',       qty:0.1,  base:5, unit:'L' },
+  ]},
+  { id:'ensalada-lentejas', section:'comida-sabado', name:'Ensalada de lentejas', serves:2, def:false, ingredients:[
+    { name:'Lentejas bote',   qty:0.5,  base:2, unit:'kg' },
+    { name:'Pepino',          qty:0.15, base:2, unit:'kg' },
+    { name:'Tomates (rama)',  qty:1.0,  base:2, unit:'uni' },
+    { name:'Cebolla morada',  qty:0.5,  base:2, unit:'uni' },
+    { name:'Queso feta',      qty:1.0,  base:2, unit:'paquete' },
+    { name:'Aceite oliva',    qty:0.1,  base:2, unit:'L' },
+    { name:'limon',           qty:1.0,  base:2, unit:'uni' },
+    { name:'Pan',             qty:1.0,  base:4, unit:'uni' },
+  ]},
+
+  /* ------- CENA SÁBADO ------- */
+  { id:'fajitas-setas', section:'cena-sabado', name:'Fajitas de setas', serves:5, def:false, ingredients:[
+    { name:'Setas',                    qty:1.0,  base:5, unit:'kg' },
+    { name:'Concentrado de tomate',    qty:100,  base:5, unit:'g' },
+    { name:'Cebolla',                  qty:2.0,  base:5, unit:'uni' },
+    { name:'Chipotle',                 qty:0.25, base:5, unit:'lata' },
+    { name:'Dientes de ajo',           qty:2.0,  base:5, unit:'uni' },
+    { name:'Cebolla morada',           qty:1.0,  base:5, unit:'uni' },
+    { name:'Vinagre blanco',           qty:0.1,  base:5, unit:'L' },
+    { name:'Caldo verduras',           qty:0.25, base:5, unit:'L' },
+    { name:'Lima',                     qty:2.0,  base:5, unit:'uni' },
+    { name:'Queso feta',               qty:1.0,  base:5, unit:'paquetes' },
+    { name:'Tortillas (Fajitas)',      qty:16.0, base:5, unit:'uni' },
+  ]},
+  { id:'fajitas-pollo', section:'cena-sabado', name:'Fajitas de pollo', serves:10, def:false, ingredients:[
+    { name:'Tomates (rama)',      qty:3.0, base:10, unit:'uni' },
+    { name:'Tofu',                qty:2.0, base:10, unit:'uni' },
+    { name:'Tortillas (Fajitas)', qty:25.0,base:10, unit:'uni' },
+    { name:'Pollo',               qty:1.2, base:10, unit:'kg' },
+    { name:'Pimiento rojo',       qty:1.8, base:10, unit:'uni' },
+    { name:'Pimiento verde',      qty:1.8, base:10, unit:'uni' },
+    { name:'Cebolla dulce',       qty:3.0, base:10, unit:'uni' },
+    { name:'Sazonador',           qty:2.5, base:10, unit:'uni' },
+  ]},
+
+  /* ------- COMIDA DOMINGO ------- */
+  { id:'risotto-champis', section:'comida-domingo', name:'Risotto de champiñones', serves:5, def:false, ingredients:[
+    { name:'Caldo verduras', qty:1.25, base:5, unit:'L' },
+    { name:'Arroz arborio',  qty:0.4,  base:5, unit:'kg' },
+    { name:'Puerro',         qty:2.5,  base:5, unit:'uni' },
+    { name:'Champis',        qty:0.25, base:5, unit:'kg' },
+    { name:'Ajo (diente)',   qty:5.0,  base:5, unit:'uni' },
+    { name:'Parmesano',      qty:0.125,base:5, unit:'kg' },
+  ]},
+  { id:'risotto-calabaza', section:'comida-domingo', name:'Risotto de calabaza', serves:5, def:false, ingredients:[
+    { name:'Caldo verduras', qty:1.25, base:5, unit:'L' },
+    { name:'Arroz arborio',  qty:0.4,  base:5, unit:'kg' },
+    { name:'Calabaza',       qty:0.5,  base:5, unit:'kg' },
+    { name:'mantequilla',    qty:50,   base:5, unit:'g' },
+    { name:'Ajo (diente)',   qty:5.0,  base:5, unit:'uni' },
+    { name:'Parmesano',      qty:0.125,base:5, unit:'kg' },
+    { name:'Aceite oliva',   qty:0.4,  base:5, unit:'L' },
+    { name:'Limon',          qty:1.0,  base:5, unit:'uni' },
+  ]},
+  { id:'risotto-zanahoria', section:'comida-domingo', name:'Risotto de zanahoria', serves:5, def:false, ingredients:[
+    { name:'Caldo verduras', qty:1.25, base:5, unit:'L' },
+    { name:'Arroz arborio',  qty:0.4,  base:5, unit:'kg' },
+    { name:'Zanahoria',      qty:0.25, base:5, unit:'kg' },
+    { name:'mantequilla',    qty:50,   base:5, unit:'g' },
+    { name:'Ajo (cabeza)',   qty:1.0,  base:5, unit:'uni' },
+    { name:'Parmesano',      qty:0.125,base:5, unit:'kg' },
+    { name:'Aceite oliva',   qty:0.4,  base:5, unit:'L' },
+    { name:'Limon',          qty:1.0,  base:5, unit:'uni' },
+  ]},
+  { id:'pan-otros', section:'comida-domingo', name:'Pan (extra)', serves:4, def:false, ingredients:[
+    { name:'Pan', qty:1.0, base:4, unit:'uni' },
+  ]},
+
+  /* ------- DESAYUNOS ------- */
+  { id:'desayunos', section:'desayunos', name:'Desayunos', serves:10, def:true, ingredients:[
+    { name:'Bizcocho',             qty:2.0, base:10, unit:'uni' },
+    { name:'Leche semidesnatada',  qty:5.0, base:10, unit:'L' },
+    { name:'Leche avena/soja',     qty:1.0, base:10, unit:'L' },
+    { name:'Café (250g)',          qty:1.0, base:10, unit:'uni' },
+    { name:'Bollería',             qty:1.5, base:10, unit:'bolsas' },
+    { name:'Galletas',             qty:1.5, base:10, unit:'paquetes' },
+    { name:'Zumos',                qty:5.0, base:10, unit:'L' },
+  ]},
+
+  /* ------- BEBIDA ------- */
+  { id:'alcohol', section:'bebida', name:'Alcohol (2 noches)', serves:5, def:true, ingredients:[
+    { name:'Cervezas (latas)', qty:60.0, base:5, unit:'uni' },
+    { name:'Lambrusco',        qty:0.5,  base:5, unit:'uni' },
+    { name:'Vino (brik)',      qty:2.5,  base:5, unit:'uni' },
+    { name:'Cocacola (2L)',    qty:2.5,  base:5, unit:'uni' },
+    { name:'Hielo',            qty:2.0,  base:5, unit:'uni' },
+  ]},
+
+  /* ------- PICOTEO ------- */
+  { id:'picoteo', section:'picoteo', name:'Picoteo (2 noches)', serves:10, def:true, ingredients:[
+    { name:'Nachos',             qty:1.5, base:10, unit:'uni' },
+    { name:'Humus',              qty:1.0, base:10, unit:'uni' },
+    { name:'Guacamole',          qty:1.0, base:10, unit:'uni' },
+    { name:'Mix Patatas fritas', qty:1.5, base:10, unit:'uni' },
+    { name:'Picos',              qty:1.5, base:10, unit:'uni' },
+    { name:'Chocolate',          qty:1.0, base:10, unit:'tableta' },
+    { name:'Aceitunas',          qty:1.0, base:10, unit:'uni' },
+  ]},
+
+  /* ------- VARIOS ------- */
+  { id:'varios', section:'varios', name:'Varios', serves:20, def:true, ingredients:[
+    { name:'Vasos plástico',     qty:20.0, base:20, unit:'uni' },
+    { name:'Papel cocina',       qty:2.0,  base:20, unit:'uni' },
+    { name:'Papel higienico',    qty:10.0, base:20, unit:'uni' },
+    { name:'Bolsas basura',      qty:1.0,  base:20, unit:'paquete' },
+    { name:'Licor café',         qty:1.5,  base:20, unit:'uni' },
+    { name:'Palomitas',          qty:3.0,  base:20, unit:'uni' },
+    { name:'Gel  limpieza baño', qty:1.0,  base:20, unit:'uni' },
+    { name:'Agua',               qty:80.0, base:20, unit:'L' },
+    { name:'Crema Orujo',        qty:2.0,  base:20, unit:'uni' },
+  ]},
+
+  /* ------- CELIACOS ------- */
+  { id:'celiaco', section:'celiacos', name:'Menú celiaco', serves:1, def:false, ingredients:[
+    { name:'Tortilla patata precocinada', qty:1.0,  base:1, unit:'uni' },
+    { name:'Lentejas Celiaco /Otra cena', qty:1.0,  base:1, unit:'uni' },
+    { name:'Cervezas sin gluten',         qty:10.0, base:1, unit:'uni' },
+    { name:'Fajitas sin gluten',          qty:2.0,  base:1, unit:'uni' },
+  ]},
+];
+
+/* =========================================================
+   ESTADO + PERSISTENCIA
+   ========================================================= */
+const STORAGE_KEY = 'mahallos-fest-v1';
+
+const state = {
+  people: { ...DEFAULT_PEOPLE },
+  selected: Object.fromEntries(RECIPES.map(r => [r.id, r.def])),
+};
+
+function saveState(){
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e){}
+}
+function loadState(){
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const data = JSON.parse(raw);
+    if (data.people) Object.assign(state.people, data.people);
+    if (data.selected) {
+      for (const id in state.selected) {
+        if (id in data.selected) state.selected[id] = !!data.selected[id];
+      }
+    }
+  } catch(e){}
+}
+
+/* =========================================================
+   CÁLCULO
+   ========================================================= */
+
+/** Devuelve la cantidad total de esa receta para N personas. */
+function scaleIngredient(ing, people){
+  return (ing.qty / ing.base) * people;
+}
+
+/** Agrupa todos los ingredientes de las recetas seleccionadas. */
+function buildShoppingList(){
+  const totals = {}; // nombre -> { qty, unit }
+  for (const recipe of RECIPES){
+    if (!state.selected[recipe.id]) continue;
+    const section = SECTIONS.find(s => s.id === recipe.section);
+    const people = state.people[section.eventKey] ?? 0;
+    if (people <= 0) continue;
+    for (const ing of recipe.ingredients){
+      if (ing.qty == null) continue;
+      const add = scaleIngredient(ing, people);
+      if (!totals[ing.name]) totals[ing.name] = { qty: 0, unit: ing.unit };
+      totals[ing.name].qty += add;
+    }
+  }
+  // Ordenar alfabéticamente
+  return Object.entries(totals)
+    .sort(([a],[b]) => a.localeCompare(b, 'es', { sensitivity:'base' }))
+    .map(([name, v]) => ({ name, qty: v.qty, unit: v.unit }));
+}
+
+/** Notas especiales (packs, cabezas de ajo) */
+function extraNote(name, total){
+  const n = name.toLowerCase();
+  if (n.includes('cerveza') && n.includes('lata')){
+    const packs = Math.ceil(total / 24);
+    return packs > 0 ? `≈ ${packs} pack${packs>1?'s':''} de 24` : null;
+  }
+  if (n === 'ajo (diente)' || n === 'dientes de ajo'){
+    const heads = Math.ceil(total / 12);
+    return heads > 0 ? `≈ ${heads} cabeza${heads>1?'s':''} (12 dientes)` : null;
+  }
+  return null;
+}
+
+/* =========================================================
+   RENDER
+   ========================================================= */
+
+function fmtNum(n){
+  if (!isFinite(n)) return '0';
+  if (Math.abs(n - Math.round(n)) < 1e-9) return String(Math.round(n));
+  return String(parseFloat(n.toFixed(2)));
+}
+
+function renderPeopleInputs(){
+  const el = document.getElementById('peopleInputs');
+  el.innerHTML = Object.keys(DEFAULT_PEOPLE).map(key => `
+    <div class="person-field">
+      <label for="p-${key}">${EVENT_LABELS[key]}</label>
+      <input type="number" min="0" step="1" id="p-${key}" data-key="${key}" value="${state.people[key]}">
+    </div>
+  `).join('');
+  el.querySelectorAll('input').forEach(inp => {
+    inp.addEventListener('input', e => {
+      const v = Math.max(0, parseInt(e.target.value || '0', 10));
+      state.people[e.target.dataset.key] = v;
+      saveState();
+      renderRecipes();   // actualizar textos "N pers"
+      renderList();
+    });
+  });
+}
+
+function renderRecipes(){
+  const container = document.getElementById('recipeGroups');
+  container.innerHTML = SECTIONS.map(sec => {
+    const recipes = RECIPES.filter(r => r.section === sec.id);
+    if (!recipes.length) return '';
+    const people = state.people[sec.eventKey];
+    return `
+      <div class="section" data-section="${sec.id}">
+        <div class="section-header">
+          <h3>${sec.label}</h3>
+          <span class="pers">${people} pers</span>
+          <div class="bulk">
+            <button data-bulk="all">todo</button>
+            <button data-bulk="none">nada</button>
+          </div>
+        </div>
+        ${recipes.map(r => renderRecipe(r, people)).join('')}
+      </div>
+    `;
+  }).join('');
+
+  // Listeners
+  container.querySelectorAll('.recipe-head input[type=checkbox]').forEach(cb => {
+    cb.addEventListener('change', e => {
+      const id = e.target.dataset.id;
+      state.selected[id] = e.target.checked;
+      saveState();
+      renderList();
+      // Refrescar el estilo del nombre
+      const head = e.target.closest('.recipe-head');
+      head.querySelector('.recipe-name').style.color = e.target.checked ? 'var(--accent)' : '';
+    });
+  });
+
+  // Toggle "ver ingredientes" al pulsar la cabecera (excepto el checkbox)
+  container.querySelectorAll('.recipe-head').forEach(head => {
+    head.addEventListener('click', e => {
+      if (e.target.matches('input[type=checkbox]')) return;
+      head.closest('.recipe').classList.toggle('open');
+    });
+  });
+
+  // Botones "todo/nada"
+  container.querySelectorAll('[data-bulk]').forEach(btn => {
+    btn.addEventListener('click', e => {
+      const section = e.target.closest('.section');
+      const secId = section.dataset.section;
+      const setTo = e.target.dataset.bulk === 'all';
+      RECIPES.filter(r => r.section === secId).forEach(r => state.selected[r.id] = setTo);
+      saveState();
+      renderRecipes();
+      renderList();
+    });
+  });
+}
+
+function renderRecipe(recipe, people){
+  const checked = state.selected[recipe.id] ? 'checked' : '';
+  return `
+    <div class="recipe" data-recipe="${recipe.id}">
+      <label class="recipe-head">
+        <input type="checkbox" data-id="${recipe.id}" ${checked}>
+        <span class="recipe-name">${recipe.name}</span>
+        <span class="recipe-pers">base ${recipe.serves} · ${people} pers</span>
+      </label>
+      <ul class="ingredients">
+        ${recipe.ingredients.map(ing => {
+          const total = scaleIngredient(ing, people);
+          const q = ing.qty == null ? '—' : fmtNum(total) + ' ' + ing.unit;
+          return `<li><span>${ing.name}</span><span>${q}</span></li>`;
+        }).join('')}
+      </ul>
+    </div>
+  `;
+}
+
+function renderList(){
+  const list = document.getElementById('shoppingList');
+  const items = buildShoppingList();
+  document.getElementById('itemCount').textContent = items.length;
+
+  if (!items.length){
+    list.innerHTML = `<li class="empty">Marca alguna receta para ver la lista</li>`;
+    return;
+  }
+  list.innerHTML = items.map(it => {
+    const note = extraNote(it.name, it.qty);
+    return `
+      <li>
+        <span class="item-name">${it.name}</span>
+        <span class="item-qty">
+          <b>${fmtNum(it.qty)}</b><span class="unit">${it.unit}</span>
+          ${note ? `<span class="item-note">${note}</span>` : ''}
+        </span>
+      </li>
+    `;
+  }).join('');
+}
+
+/* =========================================================
+   ARRANQUE
+   ========================================================= */
+document.getElementById('resetBtn').addEventListener('click', () => {
+  if (!confirm('¿Restaurar valores por defecto?')) return;
+  state.people = { ...DEFAULT_PEOPLE };
+  state.selected = Object.fromEntries(RECIPES.map(r => [r.id, r.def]));
+  saveState();
+  renderPeopleInputs();
+  renderRecipes();
+  renderList();
+});
+
+loadState();
+renderPeopleInputs();
+renderRecipes();
+renderList();
+</script>
+</body>
+</html>

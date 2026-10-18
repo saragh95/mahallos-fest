@@ -45,26 +45,16 @@
   }
   .header-inner{
     max-width:1500px; margin:0 auto; position:relative; z-index:2;
-    display:flex; align-items:flex-end; gap:24px; flex-wrap:wrap;
+    display:flex; align-items:flex-end; justify-content:space-between; gap:24px; flex-wrap:wrap;
   }
   .masthead{flex:1 1 auto; min-width:280px}
   
   /* Contenedor para poner el título y la imagen en la misma línea */
   .title-row {
     display: flex;
-    align-items: flex-end; /* Alinea la base de la imagen con la del texto */
+    align-items: flex-end; /* Alinea la base del personaje con la base del texto */
     gap: 15px;             /* Espacio entre el texto y el dibujo */
     flex-wrap: wrap;       /* Si la pantalla es muy pequeña, baja la imagen */
-  }
-
-  /* Estilos para la imagen insertada - ¡HECHO MÁS GRANDE! */
-  .header-img {
-    height: clamp(120px, 16vw, 190px); /* Tamaño aumentado */
-    width: auto;
-    object-fit: contain;
-    margin-bottom: 5px;
-    /* Este truco hace que el fondo blanco de la imagen sea transparente */
-    mix-blend-mode: multiply; 
   }
 
   .masthead h1{
@@ -75,6 +65,8 @@
     text-transform:uppercase;
     position:relative;
   }
+  
+  /* Corazón dentro de las letras A y O */
   .masthead h1 .o{
     display:inline-block; position:relative; color:var(--ink);
   }
@@ -85,12 +77,13 @@
     font-size:.32em; color:var(--paper-2);
     font-family:"Rubik",sans-serif;
   }
+
   .masthead .fest-tag{
     font-family:"Caveat",cursive;
     font-size: clamp(22px, 3.2vw, 34px);
     font-weight:700;
     color:var(--ink);
-    margin-top:-4px;
+    margin-top:15px;
     display:flex; align-items:center; gap:14px; flex-wrap:wrap;
   }
   .masthead .fest-tag .dates{
@@ -104,9 +97,21 @@
     transform:rotate(1.5deg);
   }
 
+  /* Imagen del personaje, al lado del título */
+  .header-img {
+    height: clamp(120px, 16vw, 190px); /* Ajustado para que quede bien junto a las letras */
+    width: auto;
+    object-fit: contain;
+    margin-bottom: 5px;
+    /* Este truco hace que el fondo blanco de la imagen sea transparente */
+    mix-blend-mode: multiply; 
+  }
+
+  /* Contenedor del botón Reset a la derecha del todo */
   .header-side{
     display:flex; flex-direction:column; align-items:flex-end; gap:10px;
   }
+
   .reset{
     background:var(--paper-2);
     border:2px solid var(--ink);
@@ -120,13 +125,12 @@
   .reset:hover{transform:translate(-1px,-1px); box-shadow:4px 4px 0 var(--ink)}
   .reset:active{transform:translate(2px,2px); box-shadow:1px 1px 0 var(--ink)}
 
+  /* Garabato de la izquierda */
   .doodle{
     position:absolute; z-index:1; pointer-events:none;
     opacity:.9;
   }
   .doodle.top-left{top:-10px; left:-20px; width:200px; height:200px}
-  .doodle.top-right{top:10px; right:-30px; width:180px; height:180px}
-  .doodle.bottom{ bottom:-30px; left:40%; width:260px; height:120px; opacity:.7}
 
   /* =============== TABS =============== */
   .tabs{
@@ -173,6 +177,10 @@
   @media (max-width:1000px){
     main{grid-template-columns:1fr; padding:18px}
     header{padding:22px 18px 18px}
+    .header-inner{justify-content:center; text-align:center;}
+    .header-side{align-items:center; width:100%; margin-top: 15px;}
+    .masthead .fest-tag{justify-content:center;}
+    .title-row{justify-content:center;}
   }
 
   .panel{
@@ -520,12 +528,6 @@
     <path d="M10,100 Q40,60 60,100 T110,100 T160,100" stroke="#1d7fbf" stroke-width="5" stroke-linecap="round" fill="none"/>
     <path d="M10,120 Q40,80 60,120 T110,120 T160,120" stroke="#f4b400" stroke-width="5" stroke-linecap="round" fill="none"/>
   </svg>
-  <svg class="doodle top-right" viewBox="0 0 200 200" fill="none">
-    <path d="M100,40 C90,15 60,20 60,45 C60,70 100,90 100,110 C100,90 140,70 140,45 C140,20 110,15 100,40 Z"
-          stroke="#131313" stroke-width="4" fill="none" stroke-linejoin="round"/>
-    <circle cx="160" cy="140" r="6" fill="#e63946"/>
-    <circle cx="40" cy="150" r="4" fill="#1d7fbf"/>
-  </svg>
 
   <div class="header-inner">
     <div class="masthead">
@@ -542,6 +544,8 @@
         <span class="place">BURGOS ★ 2026</span>
       </div>
     </div>
+    
+    <!-- Botón Reset a la derecha -->
     <div class="header-side">
       <button class="reset" id="resetBtn">↺ Reset</button>
     </div>
@@ -897,7 +901,6 @@ function renderPeopleInputs(){
       renderRecetasView();
     });
   });
-  // Update the master Total field
   document.getElementById('p-total').value = state.total;
 }
 
@@ -1062,7 +1065,7 @@ totalInput.addEventListener('input', e => {
   const v = Math.max(0, parseInt(e.target.value || '0', 10));
   state.total = v;
   for (const key of Object.keys(DEFAULT_PEOPLE)){
-    if (key === 'Celiacos') continue; // el menú celiaco NO se toca con el Total
+    if (key === 'Celiacos') continue;
     state.people[key] = v;
     const inp = document.getElementById(`p-${key}`);
     if (inp) inp.value = v;

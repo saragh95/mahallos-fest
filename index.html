@@ -38,7 +38,7 @@
   /* =============== HEADER CARTEL =============== */
   header{
     position:relative;
-    padding:34px 32px 20px; /* Un pelín menos de padding abajo para que pise bien */
+    padding:34px 32px 20px;
     background:var(--paper-2);
     border-bottom:3px solid var(--ink);
     overflow:hidden;
@@ -49,7 +49,6 @@
     display:flex; align-items:flex-end; justify-content:space-between; gap:24px; flex-wrap:wrap;
   }
 
-  /* Agrupamos el título y el muñeco para que estén juntos y alineados abajo */
   .brand-group {
     display: flex;
     align-items: flex-end;
@@ -71,7 +70,6 @@
     position:relative;
   }
   
-  /* Corazón dentro de las letras A y O */
   .masthead h1 .o{
     display:inline-block; position:relative; color:var(--ink);
   }
@@ -102,12 +100,11 @@
     transform:rotate(1.5deg);
   }
 
-  /* Imagen del personaje. Alineada abajo del todo */
   .header-img {
     height: clamp(180px, 26vw, 320px); 
     width: auto;
     object-fit: contain;
-    margin-bottom: -5px; /* Hace que las patitas toquen la línea negra del borde */
+    margin-bottom: -5px; 
     mix-blend-mode: multiply; 
   }
 
@@ -177,15 +174,55 @@
     align-items:start;
     position:relative; z-index:2;
   }
+
+  /* =========================================================
+     MÓVIL: Cabecera compacta (Texto izq, Muñeco dcha)
+     ========================================================= */
   @media (max-width:1000px){
     main{grid-template-columns:1fr; padding:18px}
-    header{padding:22px 18px 18px}
-    .header-inner{justify-content:center; text-align:center;}
-    .brand-group { flex-direction: column; align-items: center; gap: 10px; }
-    .masthead { align-items: center; }
-    .header-img { margin-bottom: 0; }
-    .header-side{align-items:center; width:100%; margin-top: 15px;}
-    .masthead .fest-tag{justify-content:center;}
+    header{padding:16px 16px 12px}
+    
+    .header-inner {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 12px;
+    }
+    
+    .brand-group { 
+      flex-direction: row; 
+      justify-content: space-between;
+      align-items: flex-end; 
+      gap: 10px; 
+      width: 100%;
+    }
+    
+    .masthead { 
+      align-items: flex-start; 
+      text-align: left;
+      padding-bottom: 0; 
+    }
+    
+    .masthead h1 {
+      font-size: clamp(34px, 10vw, 55px); /* Letra más ajustada */
+    }
+    
+    .masthead .fest-tag { 
+      justify-content: flex-start; 
+      font-size: clamp(16px, 4vw, 22px);
+      margin-top: 6px;
+      gap: 8px;
+    }
+    
+    .header-img { 
+      height: clamp(90px, 26vw, 130px); /* Muñeco más pequeño en móvil */
+      margin-bottom: -2px;
+    }
+    
+    .header-side{
+      align-items: flex-end; 
+      width: 100%; 
+      padding-bottom: 0;
+    }
   }
 
   .panel{
@@ -536,7 +573,7 @@
 
   <div class="header-inner">
     
-    <!-- Grupo: Título y muñeco juntos, alineados abajo -->
+    <!-- Grupo: Título y muñeco -->
     <div class="brand-group">
       <div class="masthead">
         <h1>MAH<span class="o">A</span>LL<span class="o">O</span>S</h1>
@@ -550,7 +587,7 @@
       <img src="personaje.png" alt="Personaje Mahallos" class="header-img">
     </div>
     
-    <!-- Botón Reset a la derecha -->
+    <!-- Botón Reset -->
     <div class="header-side">
       <button class="reset" id="resetBtn">↺ Reset</button>
     </div>
@@ -636,23 +673,24 @@ const SECTIONS = [
   { id:'celiacos',       label:'Menú especial (celiacos)', eventKey:'Celiacos' },
 ];
 
+/* Aquí se definen las recetas que vienen marcadas por defecto (def: true) */
 const RECIPES = [
-  /* ------- CENA VIERNES ------- */
-  { id:'tortilla', section:'cena-viernes', name:'Tortilla de Patata', serves:5, def:false, ingredients:[
+  /* ------- CENA VIERNES (Todas marcadas) ------- */
+  { id:'tortilla', section:'cena-viernes', name:'Tortilla de Patata', serves:5, def:true, ingredients:[
     { name:'Patatas',        qty:1.0,  base:5, unit:'kg' },
     { name:'Huevos',         qty:6.0,  base:5, unit:'uni' },
     { name:'Cebolla dulce',  qty:1.2,  base:5, unit:'uni' },
     { name:'Pan',            qty:1.2,  base:5, unit:'barras' },
     { name:'Aceite',         qty:0.5,  base:5, unit:'L' },
   ]},
-  { id:'sopa-ajo', section:'cena-viernes', name:'Sopa de Ajo', serves:5, def:false, ingredients:[
+  { id:'sopa-ajo', section:'cena-viernes', name:'Sopa de Ajo', serves:5, def:true, ingredients:[
     { name:'Ajo (cabeza)',    qty:0.5,  base:5, unit:'Unid' },
     { name:'Aceite oliva',    qty:0.06, base:5, unit:'L' },
     { name:'pan duro',        qty:100,  base:5, unit:'g' },
     { name:'Agua',            qty:1.0,  base:5, unit:'L' },
     { name:'Huevos',          qty:2.0,  base:5, unit:'uni' },
   ]},
-  { id:'sandwich', section:'cena-viernes', name:'Sándwich de Lolo', serves:4, def:false, ingredients:[
+  { id:'sandwich', section:'cena-viernes', name:'Sándwich de Lolo', serves:4, def:true, ingredients:[
     { name:'Lata de bonito en aceite de oliva', qty:100,  base:4, unit:'g' },
     { name:'Pan de molde',                      qty:6,    base:4, unit:'uni' },
     { name:'cebolleta',                         qty:1,    base:4, unit:'uni' },
@@ -668,7 +706,7 @@ const RECIPES = [
   ]},
 
   /* ------- COMIDA SÁBADO ------- */
-  { id:'lentejas', section:'comida-sabado', name:'Lentejas', serves:5, def:false, ingredients:[
+  { id:'lentejas', section:'comida-sabado', name:'Lentejas', serves:5, def:true, ingredients:[
     { name:'Lentejas (Pardina)', qty:0.4,  base:5, unit:'kg' },
     { name:'Cebolla',            qty:1.0,  base:5, unit:'uni' },
     { name:'Patatas',            qty:0.25, base:5, unit:'kg' },
@@ -690,7 +728,7 @@ const RECIPES = [
   ]},
 
   /* ------- CENA SÁBADO ------- */
-  { id:'fajitas-setas', section:'cena-sabado', name:'Fajitas de setas', serves:5, def:false, ingredients:[
+  { id:'fajitas-setas', section:'cena-sabado', name:'Fajitas de setas', serves:5, def:true, ingredients:[
     { name:'Setas',                    qty:1.0,  base:5, unit:'kg' },
     { name:'Concentrado de tomate',    qty:100,  base:5, unit:'g' },
     { name:'Cebolla',                  qty:2.0,  base:5, unit:'uni' },
@@ -715,7 +753,7 @@ const RECIPES = [
   ]},
 
   /* ------- COMIDA DOMINGO ------- */
-  { id:'risotto-champis', section:'comida-domingo', name:'Risotto de champiñones', serves:5, def:false, ingredients:[
+  { id:'risotto-champis', section:'comida-domingo', name:'Risotto de champiñones', serves:5, def:true, ingredients:[
     { name:'Caldo verduras', qty:1.25, base:5, unit:'L' },
     { name:'Arroz arborio',  qty:0.4,  base:5, unit:'kg' },
     { name:'Puerro',         qty:2.5,  base:5, unit:'uni' },
@@ -743,7 +781,7 @@ const RECIPES = [
     { name:'Aceite oliva',   qty:0.4,  base:5, unit:'L' },
     { name:'Limon',          qty:1.0,  base:5, unit:'uni' },
   ]},
-  { id:'pan-otros', section:'comida-domingo', name:'Pan (extra)', serves:4, def:false, ingredients:[
+  { id:'pan-otros', section:'comida-domingo', name:'Pan (extra)', serves:4, def:true, ingredients:[
     { name:'Pan', qty:1.0, base:4, unit:'uni' },
   ]},
 
@@ -803,7 +841,7 @@ const RECIPES = [
 /* =========================================================
    ESTADO + PERSISTENCIA
    ========================================================= */
-const STORAGE_KEY = 'mahallos-fest-v3';
+const STORAGE_KEY = 'mahallos-fest-v4'; // Actualizado a v4 para forzar la nueva selección por defecto
 
 const state = {
   people: { ...DEFAULT_PEOPLE },

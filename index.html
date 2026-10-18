@@ -38,23 +38,28 @@
   /* =============== HEADER CARTEL =============== */
   header{
     position:relative;
-    padding:34px 32px 26px;
+    padding:34px 32px 20px; /* Un pelín menos de padding abajo para que pise bien */
     background:var(--paper-2);
     border-bottom:3px solid var(--ink);
     overflow:hidden;
   }
+  
   .header-inner{
     max-width:1500px; margin:0 auto; position:relative; z-index:2;
     display:flex; align-items:flex-end; justify-content:space-between; gap:24px; flex-wrap:wrap;
   }
-  .masthead{flex:1 1 auto; min-width:280px}
-  
-  /* Contenedor para poner el título y la imagen en la misma línea */
-  .title-row {
+
+  /* Agrupamos el título y el muñeco para que estén juntos y alineados abajo */
+  .brand-group {
     display: flex;
-    align-items: flex-end; /* Alinea la base del personaje con la base del texto */
-    gap: 15px;             /* Espacio entre el texto y el dibujo */
-    flex-wrap: wrap;       /* Si la pantalla es muy pequeña, baja la imagen */
+    align-items: flex-end;
+    gap: 20px;
+  }
+  
+  .masthead{
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 10px;
   }
 
   .masthead h1{
@@ -97,19 +102,18 @@
     transform:rotate(1.5deg);
   }
 
-  /* Imagen del personaje, al lado del título */
+  /* Imagen del personaje. Alineada abajo del todo */
   .header-img {
-    height: clamp(120px, 16vw, 190px); /* Ajustado para que quede bien junto a las letras */
+    height: clamp(180px, 26vw, 320px); 
     width: auto;
     object-fit: contain;
-    margin-bottom: 5px;
-    /* Este truco hace que el fondo blanco de la imagen sea transparente */
+    margin-bottom: -5px; /* Hace que las patitas toquen la línea negra del borde */
     mix-blend-mode: multiply; 
   }
 
-  /* Contenedor del botón Reset a la derecha del todo */
   .header-side{
     display:flex; flex-direction:column; align-items:flex-end; gap:10px;
+    padding-bottom: 10px;
   }
 
   .reset{
@@ -125,7 +129,6 @@
   .reset:hover{transform:translate(-1px,-1px); box-shadow:4px 4px 0 var(--ink)}
   .reset:active{transform:translate(2px,2px); box-shadow:1px 1px 0 var(--ink)}
 
-  /* Garabato de la izquierda */
   .doodle{
     position:absolute; z-index:1; pointer-events:none;
     opacity:.9;
@@ -178,9 +181,11 @@
     main{grid-template-columns:1fr; padding:18px}
     header{padding:22px 18px 18px}
     .header-inner{justify-content:center; text-align:center;}
+    .brand-group { flex-direction: column; align-items: center; gap: 10px; }
+    .masthead { align-items: center; }
+    .header-img { margin-bottom: 0; }
     .header-side{align-items:center; width:100%; margin-top: 15px;}
     .masthead .fest-tag{justify-content:center;}
-    .title-row{justify-content:center;}
   }
 
   .panel{
@@ -530,19 +535,19 @@
   </svg>
 
   <div class="header-inner">
-    <div class="masthead">
-      
-      <!-- Título e imagen en la misma fila -->
-      <div class="title-row">
+    
+    <!-- Grupo: Título y muñeco juntos, alineados abajo -->
+    <div class="brand-group">
+      <div class="masthead">
         <h1>MAH<span class="o">A</span>LL<span class="o">O</span>S</h1>
-        <!-- Cambia "personaje.png" por el nombre de tu archivo de imagen -->
-        <img src="personaje.png" alt="Personaje Mahallos" class="header-img">
+        <div class="fest-tag">
+          <span class="dates">26 · 27 · 28 MAYO</span>
+          <span class="place">BURGOS ★ 2026</span>
+        </div>
       </div>
-
-      <div class="fest-tag">
-        <span class="dates">26 · 27 · 28 MAYO</span>
-        <span class="place">BURGOS ★ 2026</span>
-      </div>
+      
+      <!-- Cambia "personaje.png" por el nombre de tu archivo de imagen -->
+      <img src="personaje.png" alt="Personaje Mahallos" class="header-img">
     </div>
     
     <!-- Botón Reset a la derecha -->

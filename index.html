@@ -48,6 +48,25 @@
     display:flex; align-items:flex-end; gap:24px; flex-wrap:wrap;
   }
   .masthead{flex:1 1 auto; min-width:280px}
+  
+  /* Contenedor para poner el título y la imagen en la misma línea */
+  .title-row {
+    display: flex;
+    align-items: flex-end; /* Alinea la base de la imagen con la del texto */
+    gap: 15px;             /* Espacio entre el texto y el dibujo */
+    flex-wrap: wrap;       /* Si la pantalla es muy pequeña, baja la imagen */
+  }
+
+  /* Estilos para la imagen insertada - ¡HECHO MÁS GRANDE! */
+  .header-img {
+    height: clamp(120px, 16vw, 190px); /* Tamaño aumentado */
+    width: auto;
+    object-fit: contain;
+    margin-bottom: 5px;
+    /* Este truco hace que el fondo blanco de la imagen sea transparente */
+    mix-blend-mode: multiply; 
+  }
+
   .masthead h1{
     font-family:"Bungee",sans-serif;
     font-size: clamp(38px, 8vw, 92px);
@@ -109,6 +128,40 @@
   .doodle.top-right{top:10px; right:-30px; width:180px; height:180px}
   .doodle.bottom{ bottom:-30px; left:40%; width:260px; height:120px; opacity:.7}
 
+  /* =============== TABS =============== */
+  .tabs{
+    display:flex;
+    padding:0 32px;
+    background:var(--paper-2);
+    border-bottom:2.5px solid var(--ink);
+    gap:6px;
+    align-items:flex-end;
+    overflow-x:auto;
+  }
+  @media (max-width:1000px){ .tabs{padding:0 18px} }
+  .tab-btn{
+    background:transparent;
+    border:none;
+    padding:12px 18px;
+    font-family:"Rubik",sans-serif;
+    font-size:13px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    cursor:pointer;
+    color:var(--muted);
+    border-bottom:3px solid transparent;
+    margin-bottom:-2.5px;
+    transition:color .15s, border-color .15s;
+    white-space:nowrap;
+  }
+  .tab-btn:hover{ color:var(--ink) }
+  .tab-btn.active{
+    color:var(--ink);
+    border-bottom-color:var(--red);
+  }
+  .tab-panel[hidden]{ display:none }
+
   /* =============== MAIN =============== */
   main{
     display:grid; grid-template-columns: minmax(0,1fr) 420px;
@@ -140,6 +193,15 @@
   }
 
   /* =============== INPUTS PERSONAS =============== */
+  .people-row{
+    display:grid;
+    grid-template-columns: 180px 1fr;
+    gap:14px;
+    align-items:stretch;
+  }
+  @media (max-width:700px){
+    .people-row{ grid-template-columns:1fr }
+  }
   .people-grid{
     display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
     gap:10px;
@@ -157,21 +219,49 @@
     box-shadow:3px 3px 0 var(--ink);
   }
   .person-field label{color:var(--ink); font-weight:600; font-size:13px}
+  .person-field label small{
+    display:block;
+    font-weight:400;
+    font-size:11px;
+    color:var(--muted);
+    font-family:"Caveat",cursive;
+    font-size:13px;
+    line-height:1.1;
+    margin-top:1px;
+  }
   .person-field input{
     width:64px; text-align:center; font-size:15px; font-weight:700;
     border:2px solid var(--ink); border-radius:8px; padding:4px 6px;
     background:var(--yellow); color:var(--ink); font-family:inherit;
   }
-  .person-field input:focus{
-    outline:none;
-    background:#fff;
+  .person-field input:focus{ outline:none; background:#fff }
+  .people-grid .person-field:nth-child(1) input{background:#ffe27a}
+  .people-grid .person-field:nth-child(2) input{background:#ffd0d3}
+  .people-grid .person-field:nth-child(3) input{background:#c6e6ff}
+  .people-grid .person-field:nth-child(4) input{background:#ffd9b3}
+  .people-grid .person-field:nth-child(5) input{background:#cdeccd}
+  .people-grid .person-field:nth-child(6) input{background:#e5d4ff}
+
+  /* Total field: master control */
+  .person-field-total{
+    background:var(--yellow);
+    border-width:3px;
+    padding:10px 14px;
+    box-shadow:4px 4px 0 var(--ink);
   }
-  .person-field:nth-child(1) input{background:#ffe27a}
-  .person-field:nth-child(2) input{background:#ffd0d3}
-  .person-field:nth-child(3) input{background:#c6e6ff}
-  .person-field:nth-child(4) input{background:#ffd9b3}
-  .person-field:nth-child(5) input{background:#cdeccd}
-  .person-field:nth-child(6) input{background:#e5d4ff}
+  .person-field-total label{
+    font-size:13px;
+    font-weight:800;
+    text-transform:uppercase;
+    letter-spacing:1.5px;
+  }
+  #p-total{
+    width:82px;
+    font-size:20px;
+    padding:6px 8px;
+    background:var(--paper-2);
+  }
+  #p-total:focus{ background:#fff }
 
   /* =============== SECCIONES RECETAS =============== */
   .section{
@@ -219,7 +309,6 @@
   }
   .recipe:first-of-type{border-top:none}
 
-  /* Resalta la receta cuando su checkbox está marcado */
   .recipe:has(input[type=checkbox]:checked){
     background: linear-gradient(90deg, #fff3c4 0%, #fffdf8 70%);
     box-shadow: inset 4px 0 0 var(--red);
@@ -315,6 +404,112 @@
   #shoppingList::-webkit-scrollbar-thumb{
     background:var(--ink); border-radius:4px;
   }
+
+  /* =============== VISTA RECETAS (TAB 2) =============== */
+  .recetas-view{
+    max-width:900px;
+    margin:0 auto;
+    padding:28px 32px 80px;
+  }
+  @media (max-width:1000px){
+    .recetas-view{ padding:18px 18px 60px }
+  }
+  .rv-header{
+    margin-bottom:22px;
+    text-align:center;
+  }
+  .rv-header h2{
+    margin:0;
+    font-family:"Bungee",sans-serif;
+    font-size:22px;
+    letter-spacing:1px;
+    text-transform:uppercase;
+  }
+  .rv-header p{
+    margin:4px 0 0;
+    color:var(--muted);
+    font-family:"Caveat",cursive;
+    font-size:18px;
+    font-weight:500;
+  }
+  .rv-section{
+    background:var(--paper-2);
+    border:2.5px solid var(--ink);
+    border-radius:14px;
+    margin-bottom:20px;
+    box-shadow:5px 5px 0 var(--ink);
+    overflow:hidden;
+  }
+  .rv-section-head{
+    background:var(--ink);
+    color:var(--paper-2);
+    padding:12px 18px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+  }
+  .rv-section-head h3{
+    margin:0;
+    font-family:"Bungee",sans-serif;
+    font-size:15px;
+    letter-spacing:1px;
+    text-transform:uppercase;
+  }
+  .rv-pers{
+    background:var(--paper-2);
+    color:var(--ink);
+    border-radius:20px;
+    padding:3px 12px;
+    font-size:12px;
+    font-weight:700;
+  }
+  .rv-recipe{
+    padding:14px 20px;
+    border-top:1.5px dashed var(--line);
+  }
+  .rv-recipe:first-of-type{ border-top:none }
+  .rv-recipe h4{
+    margin:0 0 2px;
+    font-size:16px;
+    font-weight:700;
+  }
+  .rv-meta{
+    color:var(--muted);
+    font-family:"Caveat",cursive;
+    font-size:15px;
+    font-weight:500;
+    margin-bottom:8px;
+  }
+  .rv-recipe ul{
+    list-style:none;
+    margin:0;
+    padding:0 0 0 14px;
+    border-left:3px solid var(--line);
+    font-size:13px;
+  }
+  .rv-recipe li{
+    display:flex;
+    justify-content:space-between;
+    padding:3px 0;
+    gap:12px;
+  }
+  .rv-recipe li span:first-child{ color:var(--muted) }
+  .rv-recipe li span:last-child{
+    font-weight:600;
+    color:var(--ink);
+    white-space:nowrap;
+  }
+  .rv-empty{
+    text-align:center;
+    color:var(--muted);
+    font-family:"Caveat",cursive;
+    font-size:22px;
+    padding:60px 20px;
+    background:var(--paper-2);
+    border:2.5px dashed var(--line);
+    border-radius:14px;
+  }
 </style>
 </head>
 <body>
@@ -334,7 +529,14 @@
 
   <div class="header-inner">
     <div class="masthead">
-      <h1>MAH<span class="o">A</span>LL<span class="o">O</span>S</h1>
+      
+      <!-- Título e imagen en la misma fila -->
+      <div class="title-row">
+        <h1>MAH<span class="o">A</span>LL<span class="o">O</span>S</h1>
+        <!-- Cambia "personaje.png" por el nombre de tu archivo de imagen -->
+        <img src="personaje.png" alt="Personaje Mahallos" class="header-img">
+      </div>
+
       <div class="fest-tag">
         <span class="dates">26 · 27 · 28 MAYO</span>
         <span class="place">BURGOS ★ 2026</span>
@@ -346,25 +548,48 @@
   </div>
 </header>
 
-<main>
-  <section>
-    <div class="panel">
-      <h2>Personas por evento</h2>
-      <div class="people-grid" id="peopleInputs"></div>
-    </div>
-    <div id="recipeGroups"></div>
-  </section>
+<nav class="tabs" role="tablist">
+  <button class="tab-btn active" data-tab="lista" role="tab">🛒 Lista de la compra</button>
+  <button class="tab-btn" data-tab="recetas" role="tab">📖 Recetas marcadas</button>
+</nav>
 
-  <aside class="list-panel">
-    <div class="panel">
-      <div class="list-head">
-        <h2>Lista de la compra</h2>
-        <span class="count"><span id="itemCount">0</span> prod.</span>
+<div id="view-lista" class="tab-panel">
+  <main>
+    <section>
+      <div class="panel">
+        <h2>Personas por evento</h2>
+        <div class="people-row">
+          <div class="person-field person-field-total">
+            <label for="p-total">Total</label>
+            <input type="number" min="0" step="1" id="p-total">
+          </div>
+          <div class="people-grid" id="peopleInputs"></div>
+        </div>
       </div>
-      <ul id="shoppingList"></ul>
+      <div id="recipeGroups"></div>
+    </section>
+
+    <aside class="list-panel">
+      <div class="panel">
+        <div class="list-head">
+          <h2>Lista de la compra</h2>
+          <span class="count"><span id="itemCount">0</span> prod.</span>
+        </div>
+        <ul id="shoppingList"></ul>
+      </div>
+    </aside>
+  </main>
+</div>
+
+<div id="view-recetas" class="tab-panel" hidden>
+  <div class="recetas-view">
+    <div class="rv-header">
+      <h2>Recetas marcadas</h2>
+      <p>Cantidades escaladas a las personas indicadas</p>
     </div>
-  </aside>
-</main>
+    <div id="recetasView"></div>
+  </div>
+</div>
 
 <script>
 /* =========================================================
@@ -372,13 +597,14 @@
    ========================================================= */
 
 const DEFAULT_PEOPLE = {
-  'Cena Viernes': 14,
-  'Comida Sábado': 14,
-  'Cena Sábado': 14,
-  'Comida Domingo': 14,
-  'Resto': 14,
+  'Cena Viernes': 36,
+  'Comida Sábado': 36,
+  'Cena Sábado': 36,
+  'Comida Domingo': 36,
+  'Resto': 36,
   'Celiacos': 0,
 };
+const DEFAULT_TOTAL = 36;
 
 const EVENT_LABELS = {
   'Cena Viernes': 'Cena Viernes',
@@ -568,10 +794,11 @@ const RECIPES = [
 /* =========================================================
    ESTADO + PERSISTENCIA
    ========================================================= */
-const STORAGE_KEY = 'mahallos-fest-v2';
+const STORAGE_KEY = 'mahallos-fest-v3';
 
 const state = {
   people: { ...DEFAULT_PEOPLE },
+  total: DEFAULT_TOTAL,
   selected: Object.fromEntries(RECIPES.map(r => [r.id, r.def])),
 };
 
@@ -584,6 +811,7 @@ function loadState(){
     if (!raw) return;
     const data = JSON.parse(raw);
     if (data.people) Object.assign(state.people, data.people);
+    if (typeof data.total === 'number') state.total = data.total;
     if (data.selected) {
       for (const id in state.selected) {
         if (id in data.selected) state.selected[id] = !!data.selected[id];
@@ -648,12 +876,17 @@ function fmtNum(n){
 
 function renderPeopleInputs(){
   const el = document.getElementById('peopleInputs');
-  el.innerHTML = Object.keys(DEFAULT_PEOPLE).map(key => `
-    <div class="person-field">
-      <label for="p-${key}">${EVENT_LABELS[key]}</label>
-      <input type="number" min="0" step="1" id="p-${key}" data-key="${key}" value="${state.people[key]}">
-    </div>
-  `).join('');
+  el.innerHTML = Object.keys(DEFAULT_PEOPLE).map(key => {
+    const isCeliaco = key === 'Celiacos';
+    const label = EVENT_LABELS[key];
+    const note = isCeliaco ? '<small>no le afecta el Total</small>' : '';
+    return `
+      <div class="person-field">
+        <label for="p-${key}">${label}${note}</label>
+        <input type="number" min="0" step="1" id="p-${key}" data-key="${key}" value="${state.people[key]}">
+      </div>
+    `;
+  }).join('');
   el.querySelectorAll('input').forEach(inp => {
     inp.addEventListener('input', e => {
       const v = Math.max(0, parseInt(e.target.value || '0', 10));
@@ -661,8 +894,11 @@ function renderPeopleInputs(){
       saveState();
       renderRecipes();
       renderList();
+      renderRecetasView();
     });
   });
+  // Update the master Total field
+  document.getElementById('p-total').value = state.total;
 }
 
 function renderRecipes(){
@@ -692,6 +928,7 @@ function renderRecipes(){
       state.selected[id] = e.target.checked;
       saveState();
       renderList();
+      renderRecetasView();
     });
   });
 
@@ -711,6 +948,7 @@ function renderRecipes(){
       saveState();
       renderRecipes();
       renderList();
+      renderRecetasView();
     });
   });
 }
@@ -758,23 +996,107 @@ function renderList(){
   }).join('');
 }
 
+function renderRecetasView(){
+  const container = document.getElementById('recetasView');
+  let hasAny = false;
+  const html = SECTIONS.map(sec => {
+    const recipes = RECIPES.filter(r => r.section === sec.id && state.selected[r.id]);
+    if (!recipes.length) return '';
+    hasAny = true;
+    const people = state.people[sec.eventKey];
+    return `
+      <div class="rv-section">
+        <div class="rv-section-head">
+          <h3>${sec.label}</h3>
+          <span class="rv-pers">${people} pers</span>
+        </div>
+        ${recipes.map(r => renderRecipeView(r, people)).join('')}
+      </div>
+    `;
+  }).join('');
+
+  if (!hasAny){
+    container.innerHTML = `<div class="rv-empty">~ marca recetas en la pestaña "Lista" para ver sus cantidades aquí ~</div>`;
+    return;
+  }
+  container.innerHTML = html;
+}
+
+function renderRecipeView(recipe, people){
+  return `
+    <div class="rv-recipe">
+      <h4>${recipe.name}</h4>
+      <div class="rv-meta">base ${recipe.serves} · escalado a ${people} pers</div>
+      <ul>
+        ${recipe.ingredients.map(ing => {
+          const total = scaleIngredient(ing, people);
+          const q = ing.qty == null ? '—' : fmtNum(total) + ' ' + ing.unit;
+          return `<li><span>${ing.name}</span><span>${q}</span></li>`;
+        }).join('')}
+      </ul>
+    </div>
+  `;
+}
+
 /* =========================================================
-   ARRANQUE
+   TABS
+   ========================================================= */
+function setActiveTab(tab){
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.tab === tab);
+  });
+  document.getElementById('view-lista').hidden = tab !== 'lista';
+  document.getElementById('view-recetas').hidden = tab !== 'recetas';
+  if (tab === 'recetas') renderRecetasView();
+}
+
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => setActiveTab(btn.dataset.tab));
+});
+
+/* =========================================================
+   TOTAL (control maestro)
+   ========================================================= */
+const totalInput = document.getElementById('p-total');
+totalInput.addEventListener('input', e => {
+  const v = Math.max(0, parseInt(e.target.value || '0', 10));
+  state.total = v;
+  for (const key of Object.keys(DEFAULT_PEOPLE)){
+    if (key === 'Celiacos') continue; // el menú celiaco NO se toca con el Total
+    state.people[key] = v;
+    const inp = document.getElementById(`p-${key}`);
+    if (inp) inp.value = v;
+  }
+  saveState();
+  renderRecipes();
+  renderList();
+  renderRecetasView();
+});
+
+/* =========================================================
+   RESET
    ========================================================= */
 document.getElementById('resetBtn').addEventListener('click', () => {
   if (!confirm('¿Restaurar valores por defecto?')) return;
   state.people = { ...DEFAULT_PEOPLE };
+  state.total = DEFAULT_TOTAL;
   state.selected = Object.fromEntries(RECIPES.map(r => [r.id, r.def]));
   saveState();
   renderPeopleInputs();
   renderRecipes();
   renderList();
+  renderRecetasView();
 });
 
+/* =========================================================
+   ARRANQUE
+   ========================================================= */
 loadState();
 renderPeopleInputs();
 renderRecipes();
 renderList();
+renderRecetasView();
+setActiveTab('lista');
 </script>
 </body>
 </html>
